@@ -541,12 +541,11 @@ uiStroke.Parent = imageButton
 uiStroke.Thickness = 4  -- Adjust the thickness of the border
 uiStroke.Color = Color3.fromRGB(255, 105, 180)  -- Pink color
 uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-uiStroke.Transparency = 0
-    
+uiStroke.Transparency = 0 
     local corner = Instance.new("UICorner")
     corner.Parent = imageButton
     
-    imageButton.MouseButton1Click:Connect(function()
+imageButton.MouseButton1Click:Connect(function()
         if WindowHidden == false then
             Window:Minimize()
             WindowHidden = true
@@ -554,19 +553,16 @@ uiStroke.Transparency = 0
             Window:Minimize()
             WindowHidden = false
         end
-    end)
-    
+    end)    
     local dragging = false
     local dragInput
     local startPos
     local startSize
-    
-    imageButton.InputBegan:Connect(function(input)
+        imageButton.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = true
             startPos = input.Position
-            startSize = imageButton.Position
-    
+            startSize = imageButton.Position    
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
@@ -574,8 +570,7 @@ uiStroke.Transparency = 0
             end)
         end
     end)
-    
-    imageButton.InputChanged:Connect(function(input)
+        imageButton.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
             local delta = input.Position - startPos
             imageButton.Position = UDim2.new(startSize.X.Scale, startSize.X.Offset + delta.X, startSize.Y.Scale, startSize.Y.Offset + delta.Y)
