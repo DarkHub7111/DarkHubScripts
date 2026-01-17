@@ -1,544 +1,759 @@
--- // // // UI Library Loading // // // --
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-
-Fluent:Notify({
-    Title = "executed ",
-    Content = "executed successfully .",
-    Duration = 5
-})
-
-local Window = Fluent:CreateWindow({
-    Title = "Horse RaceðŸŽ",
-    SubTitle = "https://www.youtube.com/@Dark.Hub711",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
-    Theme = "Darker",
-    MinimizeKey = Enum.KeyCode.LeftControl 
-})
-
-local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "home" })
-}
-
-local Options = Fluent.Options
-
--- // Auto Train // --
-local function getTreadmillBasedOnPower(currentPower, world)
-    if world == 1 then
-        if currentPower >= 5000000000 then
-            return "Treadmill_1_12"
-        elseif currentPower >= 1500000000 then
-            return "Treadmill_1_11"
-        elseif currentPower >= 300000000 then
-            return "Treadmill_1_10"
-        elseif currentPower >= 50000000 then
-            return "Treadmill_1_9"
-        elseif currentPower >= 15000000 then
-            return "Treadmill_1_8"
-        elseif currentPower >= 4000000 then
-            return "Treadmill_1_7"
-        elseif currentPower >= 1000000 then
-            return "Treadmill_1_6"
-        elseif currentPower >= 400000 then
-            return "Treadmill_1_5"
-        elseif currentPower >= 35000 then
-            return "Treadmill_1_4"
-        elseif currentPower >= 5000 then
-            return "Treadmill_1_3"
-        elseif currentPower >= 1000 then
-            return "Treadmill_1_2"
-        else
-            return "Treadmill_1_1"
-        end
-    elseif world == 2 then
-        if currentPower >= 68000000000000 then
-            return "Treadmill_2_12"
-        elseif currentPower >= 31000000000000 then
-            return "Treadmill_2_11"
-        elseif currentPower >= 14000000000000 then
-            return "Treadmill_2_10"
-        elseif currentPower >= 6400000000000 then
-            return "Treadmill_2_9"
-        elseif currentPower >= 2900000000000 then
-            return "Treadmill_2_8"
-        elseif currentPower >= 1200000000000 then
-            return "Treadmill_2_7"
-        elseif currentPower >= 570000000000 then
-            return "Treadmill_2_6"
-        elseif currentPower >= 260000000000 then
-            return "Treadmill_2_5"
-        elseif currentPower >= 120000000000 then
-            return "Treadmill_2_4"
-        elseif currentPower >= 53000000000 then
-            return "Treadmill_2_3"
-        elseif currentPower >= 24000000000 then
-            return "Treadmill_2_2"
-        else
-            return "Treadmill_2_1"
-        end
-    elseif world == 3 then
-        if currentPower >= 280000000000000 then
-            return "Treadmill_3_12"
-        elseif currentPower >= 140000000000000 then
-            return "Treadmill_3_11"
-        elseif currentPower >= 72000000000000 then
-            return "Treadmill_3_10"
-        elseif currentPower >= 36000000000000 then
-            return "Treadmill_3_9"
-        elseif currentPower >= 18000000000000 then
-            return "Treadmill_3_8"
-        elseif currentPower >= 8800000000000 then
-            return "Treadmill_3_7"
-        elseif currentPower >= 4400000000000 then
-            return "Treadmill_3_6"
-        elseif currentPower >= 2200000000000 then
-            return "Treadmill_3_5"
-        elseif currentPower >= 1100000000000 then
-            return "Treadmill_3_4"
-        elseif currentPower >= 560000000000 then
-            return "Treadmill_3_3"
-        elseif currentPower >= 280000000000 then
-            return "Treadmill_3_2"
-        else
-            return "Treadmill_3_1"
-        end
-    elseif world == 4 then
-        if currentPower >= 1100000000000000000 then
-            return "Treadmill_4_12"
-        elseif currentPower >= 560000000000000000 then
-            return "Treadmill_4_11"
-        elseif currentPower >= 280000000000000000 then
-            return "Treadmill_4_10"
-        elseif currentPower >= 140000000000000000 then
-            return "Treadmill_4_9"
-        elseif currentPower >= 70000000000000000 then
-            return "Treadmill_4_8"
-        elseif currentPower >= 35000000000000000 then
-            return "Treadmill_4_7"
-        elseif currentPower >= 17500000000000000 then
-            return "Treadmill_4_6"
-        elseif currentPower >= 8750000000000000 then
-            return "Treadmill_4_5"
-        elseif currentPower >= 4375000000000000 then
-            return "Treadmill_4_4"
-        elseif currentPower >= 2187500000000000 then
-            return "Treadmill_4_3"
-        elseif currentPower >= 1093750000000000 then
-            return "Treadmill_4_2"
-        else
-            return "Treadmill_4_1"
-        end
-    else
-        return "No Treadmill"  -- Caso o mundo não seja identificado
-    end
-end
-
-local function getCurrentPower()
-    local player = game.Players.LocalPlayer
-    local leaderstats = player:WaitForChild("leaderstats")
-    local powerStat = leaderstats:WaitForChild("\226\154\161\239\184\143Power")  
-    return tonumber(powerStat.Value) 
-end
-
-local function getWorldByPower(currentPower)
-    if currentPower >= 5000000000 then
-        return 1  -- Mundo 1
-    elseif currentPower >= 11000000000000 then
-        return 2  -- Mundo 2
-    elseif currentPower >= 140000000000000 then
-        return 3  -- Mundo 3
-    elseif currentPower >= 560000000000000000 then
-        return 4  -- Mundo 4
-    else
-        return 1  -- Caso o poder não se encaixe, por padrão, é Mundo 1
-    end
-end
-
-local function startTraining(treadmill)
-    game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("TrainService"):WaitForChild("RE"):WaitForChild("RunTrain"):FireServer(treadmill)
-end
-
-local AutoTrainEnabled = false
-local AutoTrainrunning = false
-
-local function startAutoTrain()
-    if not AutoTrainEnabled or AutoTrainrunning then
-        return  
-    end
-
-    AutoTrainrunning = true 
-
-    while AutoTrainEnabled do
-        local currentPower = getCurrentPower()
-        local world = getWorldByPower(currentPower)  -- Identifica o mundo
-        local bestTreadmill = getTreadmillBasedOnPower(currentPower, world)
-
-        startTraining(bestTreadmill)
-
-        task.wait(0.1)  
-    end
-
-    AutoTrainrunning = false  
-end
-
-do
--- // AutoTrain UI // --
-local AutoTrainToggle = Tabs.Main:AddToggle("Auto Train", {
-    Title = "Auto Train",
-    Default = false,
-    Callback = function(Value)
-        AutoTrainEnabled = Value
-        if Value and not AutoTrainrunning then
-            startAutoTrain()  
-        elseif not Value then
-            AutoTrainEnabled = false 
-        end
-    end
-})
-end
-
-local InfinitePotionEnabled = false
-
-local function InfinitePotionLoop()
-    while InfinitePotionEnabled do
-        game:GetService("ReplicatedStorage").Packages._Index["sleitnick_knit@1.5.1"].knit.Services.ChestService.RF.ClaimDailyChest:InvokeServer()
-        task.wait() -- Pequena pausa para evitar travamento
-    end
-end
-
--- Criando o Toggle na Fluent UI
-local InfinitePotionToggle = Tabs.Main:AddToggle("Infinite Potion", {
-    Title = "Infinite Potion + King Slime",
-    Default = false,
-    Callback = function(Value)
-        InfinitePotionEnabled = Value
-        if Value then
-            InfinitePotionLoop() -- Inicia o loop se ativado
-        else
-            -- Para o loop quando desativado
-            InfinitePotionEnabled = false
-        end
-    end
-})
-
--- Notificando o usuÃ¡rio que o Toggle estÃ¡ pronto
-Fluent:Notify({
-    Title = "Infinite Potion Toggle",
-    Content = "O botÃ£o de Infinite Potion + King Slime foi ativado!",
-    Duration = 5
-})
-
-local VirtualUser = game:GetService("VirtualUser")
+-- SERVICES BÁSICOS
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local VirtualUser = game:GetService("VirtualUser")
+local LocalPlayer = Players.LocalPlayer
 
-Players.LocalPlayer.Idled:Connect(function()
+-- =====================================
+-- ANTI AFK
+-- =====================================
+LocalPlayer.Idled:Connect(function()
     VirtualUser:CaptureController()
     VirtualUser:ClickButton2(Vector2.new())
 end)
 
-Fluent:Notify({
-    Title = "Anti-AFK",
-    Content = "Anti-AFK ativado com sucesso!",
-    Duration = 5
+-- =====================================
+-- LOAD FLUENT (PRIMEIRO!)
+-- =====================================
+local Fluent = loadstring(game:HttpGet(
+    "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
+))()
+
+local SaveManager = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"
+))()
+
+local InterfaceManager = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"
+))()
+
+-- =====================================
+-- WINDOW
+-- =====================================
+local Window = Fluent:CreateWindow({
+    Title = "Legend Hub 🏇🏼",
+    SubTitle = "By DarkHub",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Theme = "Amethyst",
+    MinimizeKey = Enum.KeyCode.LeftControl
 })
 
-print("Anti-AFK ativado!")
-
--- CriaÃ§Ã£o da aba de Teleporte
-local TeleportTab = Window:AddTab({
-    Title = "Teleport",
-    Icon = "map"
-})
-
--- FunÃ§Ã£o para teleportar para o mundo especÃ­fico
-local function teleportToWorld(worldName)
-    local args
-
-    -- Definir os argumentos conforme o mundo escolhido
-    if worldName == "World 2" then
-        args = { [1] = "Area_2" }
-        print("Preparando para teleportar para World 2...") -- Personalize a mensagem se necessÃ¡rio
-    elseif worldName == "World 3" then
-        args = { [1] = "Area_3" }
-        print("Preparando para teleportar para World 3...") -- Personalize a mensagem se necessÃ¡rio
-    elseif worldName == "World 4" then
-        args = { [1] = "Area_4" }
-        print("Preparando para teleportar para World 4...") -- Personalize a mensagem se necessÃ¡rio
-    end
-
-    -- Primeiro, fazer o rejoin
-    game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
-
-    -- ApÃ³s o rejoin, teleportar para a Ã¡rea especÃ­fica
-    game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("AreaService"):WaitForChild("RE"):WaitForChild("UpdatePlayerCurrentArea"):FireServer(unpack(args))
-end
-
--- Adicionando botÃµes para cada mundo na aba de Teleporte
-TeleportTab:AddButton({
-    Title = "World 2",
-    Callback = function()
-        teleportToWorld("World 2")
-    end
-})
-
-TeleportTab:AddButton({
-    Title = "World 3",
-    Callback = function()
-        teleportToWorld("World 3")
-    end
-})
-
-TeleportTab:AddButton({
-    Title = "World 4",
-    Callback = function()
-        teleportToWorld("World 4")
-    end
-})
-
--- Adicionando o parágrafo
-Tabs.Main:AddParagraph({
-    Title = "Auto Race", 
-    Content = 'Click on "Auto race" and start the race!' 
-})
-
-local AutoRaceEnabled = false
-
--- Lista de mundos disponÃ­veis
-local worlds = {
-    ["Fruit World"] = "Area_Fruit",
-    ["World 1"] = "Area_1",
-    ["World 2"] = "Area_2",
-    ["World 3"] = "Area_3",
-    ["World 4"] = "Area_4"
+-- =====================================
+-- TABS
+-- =====================================
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "home" }),
+    Train = Window:AddTab({ Title = "Train", Icon = "power" }),
+    Misc = Window:AddTab({ Title = "Misc", Icon = "box" }),
+    Teleport = Window:AddTab({ Title = "Teleport", Icon = "map" }),
+    Pet = Window:AddTab({ Title = "Pet", Icon = "paw-print" }),
+    Egg = Window:AddTab({ Title = "Egg", Icon = "egg" })
 }
 
-local function startAutoRace()
-    while AutoRaceEnabled do
-        local args = {[1] = SelectedWorld}
+-- Aba Event criada **depois da Egg**, mas antes da Settings
+Tabs.Event = Window:AddTab({ Title = "Event", Icon = "sparkles" })
 
-        game:GetService("ReplicatedStorage")
-            :WaitForChild("Packages")
+-- Agora cria a aba Settings por último
+Tabs.Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+
+-- =====================================
+-- FLAGS
+-- =====================================
+local Flags = {
+    AutoTrain = false,
+    AutoWin = false,
+    AutoRebirth = false,
+    AutoSuper = false,
+    InfMoney = false,
+    Diamonds = false,
+    AutoGifts = false,
+    AutoCrate1 = false,
+    AutoCrate2 = false,
+    EggGhost = false,
+    InfinitePotion = false,
+    AutoEquipBestPets = false,
+    AutoCraftPets = false
+}
+-- =====================================
+-- KNIT (CARREGAMENTO SEGURO)
+-- =====================================
+local KnitLoaded = false
+local Services = {}
+
+task.spawn(function()
+    repeat task.wait() until ReplicatedStorage:FindFirstChild("Packages")
+
+    local ok, knit = pcall(function()
+        return ReplicatedStorage.Packages
+            ._Index["sleitnick_knit@1.5.1"]
+            .knit.Services
+    end)
+
+    if not ok then
+        warn("Knit não carregou")
+        return
+    end
+
+    Services = knit
+    KnitLoaded = true
+
+    Fluent:Notify({
+        Title = "Knit",
+        Content = "Knit carregado com sucesso!",
+        Duration = 4
+    })
+end)
+
+--==================================================
+--==================================================
+-- SERVICES
+--==================================================
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+
+--==================================================
+-- TRAIN TAB (FLUENT VERSION)
+--==================================================
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Knit = ReplicatedStorage.Packages._Index["sleitnick_knit@1.5.1"].knit
+local TrainRE = Knit.Services.TrainService.RE.RunTrain
+
+--==================================================
+-- FLAGS
+--==================================================
+
+local Flags = {
+    TrainWorld = "1",
+    TrainMachine = "1",
+    AutoTrain = false
+}
+
+local AutoTrainRunning = false
+
+--==================================================
+-- UI (TRAIN TAB)
+--==================================================
+
+Tabs.Train:AddSection("Auto Train")
+
+-- WORLD DROPDOWN
+Tabs.Train:AddDropdown("TrainWorld", {
+    Title = "World",
+    Values = {"1","2","3","4"},
+    Default = "1",
+    Callback = function(value)
+        Flags.TrainWorld = value
+    end
+})
+
+-- MACHINE DROPDOWN
+Tabs.Train:AddDropdown("TrainMachine", {
+    Title = "Treadmill",
+    Values = {
+        "1","2","3","4","5","6",
+        "7","8","9","10","11","12"
+    },
+    Default = "1",
+    Callback = function(value)
+        Flags.TrainMachine = value
+    end
+})
+
+--==================================================
+-- AUTO TRAIN LOOP
+--==================================================
+
+local function AutoTrainLoop()
+    if AutoTrainRunning then return end
+    AutoTrainRunning = true
+
+    while Flags.AutoTrain do
+        pcall(function()
+            TrainRE:FireServer(
+                "Treadmill_" .. Flags.TrainWorld .. "_" .. Flags.TrainMachine
+            )
+        end)
+
+        -- delay seguro (principalmente World 4)
+        task.wait(1)
+    end
+
+    AutoTrainRunning = false
+end
+
+-- TOGGLE
+Tabs.Train:AddToggle("AutoTrainToggle", {
+    Title = "Auto Train",
+    Default = false,
+    Callback = function(state)
+        Flags.AutoTrain = state
+        if state then
+            AutoTrainLoop()
+        end
+    end
+})
+-- =====================================
+-- AUTO WIN
+-- =====================================
+Tabs.Main:AddToggle("AutoWin", {
+    Title = "Auto Win Contest",
+    Callback = function(v)
+        Flags.AutoWin = v
+        task.spawn(function()
+            while Flags.AutoWin do
+                if KnitLoaded and Services.FightService then
+                    for _, area in pairs(Workspace.Areas:GetChildren()) do
+                        pcall(function()
+                            Services.FightService.RE.JoinContest:FireServer(area.Name)
+                            task.wait(0.1)
+                            for i, gate in pairs(area.WinGates:GetChildren()) do
+                                Services.FightService.RE.GetWinsEvent:FireServer(
+                                    "WinGate_" .. i,
+                                    gate.gate.Position
+                                )
+                            end
+                            Services.FightService.RE.QuitContestEvent:FireServer(area.Name)
+                        end)
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- REBIRTHS
+-- =====================================
+Tabs.Main:AddToggle("AutoRebirth", {
+    Title = "Auto Rebirth",
+    Callback = function(v)
+        Flags.AutoRebirth = v
+        task.spawn(function()
+            while Flags.AutoRebirth do
+                if KnitLoaded and Services.RebirthService then
+                    Services.RebirthService.RF.Rebirth:InvokeServer()
+                end
+                task.wait(0.1)
+            end
+        end)
+    end
+})
+
+Tabs.Main:AddToggle("AutoSuper", {
+    Title = "Auto Super Rebirth",
+    Callback = function(v)
+        Flags.AutoSuper = v
+        task.spawn(function()
+            while Flags.AutoSuper do
+                if KnitLoaded and Services.RebirthService then
+                    Services.RebirthService.RF.SuperRebirth:InvokeServer()
+                end
+                task.wait(0.3)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- INFINITE MONEY / POWER
+-- =====================================
+Tabs.Main:AddToggle("InfMoney", {
+    Title = "Infinite Money",
+    Callback = function(v)
+        Flags.InfMoney = v
+        task.spawn(function()
+            while Flags.InfMoney do
+                if KnitLoaded and Services.RandomPotionService then
+                    Services.RandomPotionService.RE.BuyPotionEvent
+                        :FireServer(-2e9, {}, true)
+                end
+                task.wait(0.1)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- MISC
+-- =====================================
+Tabs.Misc:AddToggle("Diamonds", {
+    Title = "Diamonds Upgrade",
+    Callback = function(v)
+        Flags.Diamonds = v
+        task.spawn(function()
+            while Flags.Diamonds do
+                if KnitLoaded and Services.RebirthService then
+                    Services.RebirthService.RF.SuperRebirthUpgrade
+                        :InvokeServer("Diamonds")
+                end
+                task.wait(1)
+            end
+        end)
+    end
+})
+
+Tabs.Misc:AddToggle("Halloween", {
+    Title = "Open Halloween GUI",
+    Callback = function(v)
+        local gui = LocalPlayer.PlayerGui
+            :FindFirstChild("HalloweenDailyRewardGui", true)
+        if gui then
+            gui.Enabled = v
+            gui.ResetOnSpawn = false
+        end
+    end
+})
+
+Tabs.Misc:AddToggle("AutoGifts", {
+    Title = "Auto Claim Gifts",
+    Callback = function(v)
+        Flags.AutoGifts = v
+        task.spawn(function()
+            while Flags.AutoGifts do
+                if KnitLoaded and Services.OnlineRewardService then
+                    for i = 1, 12 do
+                        Services.OnlineRewardService.RE.ClaimOnlineReward
+                            :FireServer(i)
+                        task.wait(0.5)
+                    end
+                end
+                task.wait(5)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- INFINITE POTION + KING SLIME
+-- =====================================
+Tabs.Misc:AddToggle("InfinitePotion", {
+    Title = "Infinite Potion + King Slime",
+    Default = false,
+    Callback = function(v)
+        Flags.InfinitePotion = v
+
+        task.spawn(function()
+            while Flags.InfinitePotion do
+                pcall(function()
+                    game:GetService("ReplicatedStorage")
+                        .Packages._Index["sleitnick_knit@1.5.1"]
+                        .knit.Services.ChestService
+                        .RF.ClaimDailyChest:InvokeServer()
+                end)
+
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- AUTO CRATE 1
+-- =====================================
+Tabs.Misc:AddToggle("AutoCrate1", {
+    Title = "Auto Crate 1",
+    Default = false,
+    Callback = function(v)
+        Flags.AutoCrate1 = v
+
+        task.spawn(function()
+            while Flags.AutoCrate1 do
+                pcall(function()
+                    Services.ItemCrateService.RE.UnboxCrate:FireServer("Crate_1")
+                end)
+
+                task.wait(1)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- AUTO CRATE 2
+-- =====================================
+Tabs.Misc:AddToggle("AutoCrate2", {
+    Title = "Auto Crate 2",
+    Default = false,
+    Callback = function(v)
+        Flags.AutoCrate2 = v
+
+        task.spawn(function()
+            while Flags.AutoCrate2 do
+                pcall(function()
+                    Services.ItemCrateService.RE.UnboxCrate:FireServer("Crate_2")
+                end)
+
+                task.wait(1)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- AUTO CLAIM EGG GHOST
+-- =====================================
+Tabs.Misc:AddToggle("AutoEggGhost", {
+    Title = "Auto Claim Egg Ghost",
+    Default = false,
+    Callback = function(v)
+        Flags.EggGhost = v
+
+        task.spawn(function()
+            while Flags.EggGhost do
+                pcall(function()
+                    Services.OnlineRewardService
+                        .RF.ClaimOnlineQuestReward
+                        :InvokeServer()
+                end)
+
+                task.wait(5)
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- TELEPORT
+-- =====================================
+for i = 2, 4 do
+    Tabs.Teleport:AddButton({
+        Title = "World " .. i,
+        Callback = function()
+            if KnitLoaded and Services.AreaService then
+                Services.AreaService.RE.UpdatePlayerCurrentArea
+                    :FireServer("Area_" .. i)
+            end
+        end
+    })
+end
+
+-- =====================================
+-- PET
+-- =====================================
+Tabs.Pet:AddToggle("AutoEquipBestPets", {
+    Title = "Auto Equip Best Pets",
+    Default = false,
+    Callback = function(v)
+        Flags.AutoEquipBestPets = v
+
+        task.spawn(function()
+            while Flags.AutoEquipBestPets do
+                if KnitLoaded and Services.PetService then
+                    pcall(function()
+                        Services.PetService.RE.EquipBestPets:FireServer()
+                    end)
+                end
+
+                task.wait(2) -- delay seguro
+            end
+        end)
+    end
+})
+
+Tabs.Pet:AddToggle("AutoCraftPets", {
+    Title = "Auto Craft Pets",
+    Default = false,
+    Callback = function(v)
+        Flags.AutoCraftPets = v
+
+        task.spawn(function()
+            while Flags.AutoCraftPets do
+                if KnitLoaded and Services.PetService then
+                    pcall(function()
+                        Services.PetService.RE.EnlargeAllPets:FireServer()
+                    end)
+                end
+
+                task.wait(3) -- delay seguro
+            end
+        end)
+    end
+})
+
+-- =====================================
+-- EGG TAB (FUNCIONAL)
+-- =====================================
+local EggTab = Tabs.Egg
+
+Flags.EggToggles = {}
+
+-- Função para criar toggle e auto hatch
+local function CreateEggToggle(world, egg)
+    local eggName = "Egg_" .. world .. "_" .. egg
+    Flags.EggToggles[eggName] = false
+
+    EggTab:AddToggle(eggName, {
+        Title = "World " .. world .. " - Egg " .. egg,
+        Default = false,
+        Callback = function(v)
+            Flags.EggToggles[eggName] = v
+
+            task.spawn(function()
+                while Flags.EggToggles[eggName] do
+                    pcall(function()
+                        local args = {eggName, 1}
+
+                        game:GetService("ReplicatedStorage")
+                            :WaitForChild("Packages")
+                            :WaitForChild("_Index")
+                            :WaitForChild("sleitnick_knit@1.5.1")
+                            :WaitForChild("knit")
+                            :WaitForChild("Services")
+                            :WaitForChild("EggHatchService")
+                            :WaitForChild("RE")
+                            :WaitForChild("Hatch")
+                            :FireServer(unpack(args))
+                    end)
+                    task.wait(1) -- delay entre hatches
+                end
+            end)
+        end
+    })
+end
+
+-- Cria toggles para todos os ovos (4 mundos x 4 ovos)
+for world = 1, 4 do
+    for egg = 1, 4 do
+        CreateEggToggle(world, egg)
+    end
+end
+
+-- =====================================
+-- ABA EVENT
+-- =====================================
+-- Função genérica pra comprar fruit
+local function BuyFruit(fruitID)
+    if not KnitLoaded then return end
+    local success, err = pcall(function()
+        local args = {fruitID}
+        local fruitRE = ReplicatedStorage:WaitForChild("Packages")
             :WaitForChild("_Index")
             :WaitForChild("sleitnick_knit@1.5.1")
             :WaitForChild("knit")
             :WaitForChild("Services")
-            :WaitForChild("AutoService")
+            :WaitForChild("FruitService")
             :WaitForChild("RE")
-            :WaitForChild("AutoFightStart")
-            :FireServer(unpack(args))
-
-        print("Auto Race ativado para:", SelectedWorld) -- Teste no Console
-        task.wait(5) -- Tempo de espera antes de ativar novamente
+            :WaitForChild("BuyFruit")
+        fruitRE:FireServer(unpack(args))
+    end)
+    if not success then
+        warn("Erro ao comprar fruit "..fruitID..": "..tostring(err))
     end
 end
 
-Tabs.Main:AddButton({ Title = "Auto Race", Callback = function() 
-loadstring(game:HttpGet('https://pastebin.com/raw/Ncq51Xjr'))();
- end })
--- Variável para controlar o estado do Auto Rebirth
-local AutoRebirthEnabled = false
-local AutoRebirthRunning = false
+-- Flags para ativar/desativar
+Flags.FruitToggles = {}
 
--- Definindo a variável para habilitar/desabilitar o Auto Rebirth
-local AutoRebirthEnabled = false
-local AutoRebirthRunning = false
+for i=1,4 do
+    local fruitID = string.format("Fruit_00%d",i)
+    Flags.FruitToggles[fruitID] = false
 
--- Função que inicia o Auto Rebirth
-local function startAutoRebirth()
-    while AutoRebirthEnabled do
-        -- Chamando o serviço de Rebirth no ReplicatedStorage para realizar o Rebirth
-        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("RebirthService"):WaitForChild("RF"):WaitForChild("Rebirth"):InvokeServer()
-        
-        -- Espera de 5 segundos antes de realizar outro Rebirth
-        task.wait(5)
-    end
-end
-
--- Adicionando o toggle no menu principal para controlar o Auto Rebirth
-Tabs.Main:AddToggle("Auto Rebirth", {
-    Title = "Auto Rebirth",          
-    Default = false,                 
-    Callback = function(Value)
-        AutoRebirthEnabled = Value    
-
-        if Value and not AutoRebirthRunning then
-            AutoRebirthRunning = true
-            startAutoRebirth()  -- Inicia o Auto Rebirth
-        elseif not Value then
-            AutoRebirthEnabled = false  -- Desliga o Auto Rebirth
-        end
-    end
-})
--- Criando uma nova aba "Misc"
-local MiscTab = Window:AddTab({
-    Title = "Misc",  -- Título da nova aba
-    Icon = "box"     -- Ícone associado à aba
-})
--- Variáveis para os toggles
-local AutoCrate1Enabled = false
-local AutoCrate2Enabled = false
-local EggGhostClaimEnabled = false
-
--- Função para abrir a Crate 1 em loop
-local function autoOpenCrate1()
-    while AutoCrate1Enabled do
-        local args = { [1] = "Crate_1" }
-        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index")
-            :WaitForChild("sleitnick_knit@1.5.1").knit.Services.ItemCrateService.RE.UnboxCrate:FireServer(unpack(args))
-        task.wait(1) -- Espera 1 segundo para evitar spam
-    end
-end
-
--- Função para abrir a Crate 2 em loop
-local function autoOpenCrate2()
-    while AutoCrate2Enabled do
-        local args = { [1] = "Crate_2" }
-        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index")
-            :WaitForChild("sleitnick_knit@1.5.1").knit.Services.ItemCrateService.RE.UnboxCrate:FireServer(unpack(args))
-        task.wait(1) -- Espera 1 segundo para evitar spam
-    end
-end
-
--- Função para auto claim do Egg Ghost
-local function autoClaimEggGhost()
-    while EggGhostClaimEnabled do
-        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index")
-            :WaitForChild("sleitnick_knit@1.5.1").knit.Services.OnlineRewardService.RF.ClaimOnlineQuestReward:InvokeServer()
-        task.wait(5) -- Espera 5 segundos para evitar spam
-    end
-end
-
--- Criando toggles no MiscTab
-MiscTab:AddToggle("AutoCrate1", {
-    Title = "Auto Crate 1",
-    Default = false,
-    Callback = function(Value)
-        AutoCrate1Enabled = Value
-        if Value then
-            autoOpenCrate1()
-        end
-    end
-})
-
-MiscTab:AddToggle("AutoCrate2", {
-    Title = "Auto Crate 2",
-    Default = false,
-    Callback = function(Value)
-        AutoCrate2Enabled = Value
-        if Value then
-            autoOpenCrate2()
-        end
-    end
-})
-
-MiscTab:AddToggle("AutoClaimEggGhost", {
-    Title = "Auto Claim Egg Ghost",
-    Default = false,
-    Callback = function(Value)
-        EggGhostClaimEnabled = Value
-        if Value then
-            autoClaimEggGhost()
-        end
-    end
-})
-local GiftsClaimEnabled = false  -- Variável para controlar o estado
-
-MiscTab:AddToggle("Auto Claim Gifts", {
-    Title = "Auto Claim Gifts",
-    Default = false,
-    Callback = function(Value)
-        GiftsClaimEnabled = Value
-
-        if GiftsClaimEnabled then
+    Tabs.Event:AddToggle(fruitID,{
+        Title="Auto "..fruitID,
+        Callback=function(v)
+            Flags.FruitToggles[fruitID] = v
             task.spawn(function()
-                while GiftsClaimEnabled do
-                    for i = 1, 12 do  -- Supondo que existam 12 presentes
-                        local args = { [1] = i }
-                        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("OnlineRewardService"):WaitForChild("RE"):WaitForChild("ClaimOnlineReward"):FireServer(unpack(args))
-                        task.wait(1) -- Pequena espera entre os claims
-                    end
-                    task.wait(5) -- Tempo de espera antes de tentar novamente
+                while Flags.FruitToggles[fruitID] do
+                    BuyFruit(fruitID)
+                    task.wait(1) -- delay seguro entre compras
                 end
             end)
         end
+    })
+end
+
+-- =====================================
+-- ABA EVENT - FARM CANDY/GIFT (4 WinGates)
+-- =====================================
+Flags.FarmCandy = false
+
+Tabs.Event:AddToggle("FarmCandy", {
+    Title = "Farm Candy/Gift",
+    Callback = function(v)
+        Flags.FarmCandy = v
+        task.spawn(function()
+            while Flags.FarmCandy do
+                if KnitLoaded and Services.FightService then
+                    local success, remote = pcall(function()
+                        return Services.FightService:FindFirstChild("RE"):FindFirstChild("GetWinsEvent")
+                    end)
+
+                    if success and remote then
+                        pcall(function()
+                            -- WinGate 16
+                            remote:FireServer(unpack({
+                                "WinGate_16",
+                                Vector3.new(1813, 780.8884, -689396.3125)
+                            }))
+                            -- WinGate 12
+                            remote:FireServer(unpack({
+                                "WinGate_12",
+                                Vector3.new(1813, 780.9491, -229395.1406)
+                            }))
+                            -- WinGate 14
+                            remote:FireServer(unpack({
+                                "WinGate_14",
+                                Vector3.new(1812, 780.8914, -373397.5)
+                            }))
+                            -- WinGate 13
+                            remote:FireServer(unpack({
+                                "WinGate_13",
+                                Vector3.new(1815, 780.9649, -289395.25)
+                            }))
+                        end)
+                    end
+                end
+                task.wait(0.5) -- delay seguro entre cada loop
+            end
+        end)
     end
 })
--- Criação da aba "Pet"
-local PetTab = Window:AddTab({
-    Title = "Pet",  -- Título da aba
-    Icon = "pets"   -- Ícone associado à aba
-})
 
--- Botão "Equipe Best Pet"
-PetTab:AddButton({
-    Title = "Equipe Best Pet",  -- Título do botão
-    Callback = function()
-        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("PetService"):WaitForChild("RE"):WaitForChild("EquipBestPets"):FireServer()
+-- =====================================
+-- ABA MAIN - AUTO WIN (WinGates múltiplos)
+-- =====================================
+Flags.AutoWin = false
+
+Tabs.Main:AddToggle("AutoWin", {
+    Title = "Auto Win",
+    Callback = function(v)
+        Flags.AutoWin = v
+        task.spawn(function()
+            while Flags.AutoWin do
+                if KnitLoaded and Services.FightService then
+                    local success, remote = pcall(function()
+                        return Services.FightService:FindFirstChild("RE"):FindFirstChild("GetWinsEvent")
+                    end)
+
+                    if success and remote then
+                        pcall(function()
+                            -- WinGate 16
+                            remote:FireServer(unpack({
+                                "WinGate_16",
+                                Vector3.new(1813, 780.8884, -689396.3125)
+                            }))
+                            -- WinGate 12
+                            remote:FireServer(unpack({
+                                "WinGate_12",
+                                Vector3.new(1813, 780.9491, -229395.1406)
+                            }))
+                            -- WinGate 14
+                            remote:FireServer(unpack({
+                                "WinGate_14",
+                                Vector3.new(1812, 780.8914, -373397.5)
+                            }))
+                            -- WinGate 13
+                            remote:FireServer(unpack({
+                                "WinGate_13",
+                                Vector3.new(1815, 780.9649, -289395.25)
+                            }))
+                        end)
+                    end
+                end
+                task.wait(0.5) -- delay seguro
+            end
+        end)
     end
 })
--- Botão "Craft Pet"
-PetTab:AddButton({
-    Title = "Craft Pet",  -- Título do botão
-    Callback = function()
-       game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("PetService"):WaitForChild("RE"):WaitForChild("EnlargeAllPets"):FireServer()
+
+-- =====================================
+-- ABA EVENT - EGG CHRISTMAS
+-- =====================================
+Flags.EggChristmas = false
+
+Tabs.Event:AddToggle("EggChristmas", {
+    Title = "Egg_Christmas",
+    Callback = function(v)
+        Flags.EggChristmas = v
+        task.spawn(function()
+            while Flags.EggChristmas do
+                if KnitLoaded and Services.EggHatchService then
+                    local success, remote = pcall(function()
+                        return Services.EggHatchService:FindFirstChild("RE"):FindFirstChild("Hatch")
+                    end)
+
+                    if success and remote then
+                        pcall(function()
+                            local args = {"Egg_Christmas", 3}
+                            remote:FireServer(unpack(args))
+                        end)
+                    end
+                end
+                task.wait(1) -- delay entre cada hatch
+            end
+        end)
     end
 })
 
+-- =====================================
+-- MISC | AUTO RANDOM POTION
+-- =====================================
+Flags.AutoRandomPotion = false
 
--- Notificação de sucesso
-Fluent:Notify({
-    Title = "Pet",
-    Content = "A aba Pet foi criada com sucesso!",
-    Duration = 5
-})
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+Tabs.Misc:AddToggle("AutoRandomPotion", {
+    Title = "Auto Random Potion",
+    Default = false
+}):OnChanged(function(v)
+    Flags.AutoRandomPotion = v
 
-local Window = Fluent:CreateWindow({
-    Title = "Select World Example",
-    Size = UDim2.fromOffset(580, 460),
-    Theme = "Darker",
-})
-
-local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "home" })
-}
-
-Tabs.Main:AddDropdown("Select World", {
-    Values = {"World 1", "World 2", "World 3", "World 4"},
-    Default = 1,
-    Callback = function(value)
-        if value == "World 1" then
-            local args = { [1] = "Area_1" }
-            game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("AreaService"):WaitForChild("RE"):WaitForChild("UpdatePlayerCurrentArea"):FireServer(unpack(args))
-        
-        elseif value == "World 2" then
-            local args = { [1] = "Area_2" }
-            game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("AreaService"):WaitForChild("RE"):WaitForChild("UpdatePlayerCurrentArea"):FireServer(unpack(args))
-        
-        elseif value == "World 3" then
-            local args = { [1] = "Area_3" }
-            game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("AreaService"):WaitForChild("RE"):WaitForChild("UpdatePlayerCurrentArea"):FireServer(unpack(args))
-        
-        elseif value == "World 4" then
-            local args = { [1] = "Area_4" }
-            game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.5.1"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("AreaService"):WaitForChild("RE"):WaitForChild("UpdatePlayerCurrentArea"):FireServer(unpack(args))
+    task.spawn(function()
+        while Flags.AutoRandomPotion do
+            if KnitLoaded and Services.RandomPotionService then
+                pcall(function()
+                    Services.RandomPotionService.RE.BuyPotionEvent
+                        :FireServer(3)
+                end)
+            end
+            task.wait(0.5) -- delay seguro
         end
-    end
-})
+    end)
+end)
+
+-- =====================================
+-- MISC | AUTO USE POTION
+-- =====================================
+Flags.AutoUsePotion = false
+
+Tabs.Misc:AddToggle("AutoUsePotion", {
+    Title = "Auto Use Potion (Double Strength)",
+    Default = false
+}):OnChanged(function(v)
+    Flags.AutoUsePotion = v
+
+    task.spawn(function()
+        while Flags.AutoUsePotion do
+            if KnitLoaded and Services.PotionService then
+                pcall(function()
+                    Services.PotionService.RE.UsePotion
+                        :FireServer("Potion_DoubleStrength")
+                end)
+            end
+            task.wait(1) -- delay maior pra evitar spam
+        end
+    end)
+end)
+
+-- =====================================
+-- BUTTON FLOATING 
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 local imageButton = Instance.new("ImageButton")
 imageButton.Size = UDim2.new(0, 50, 0, 50)  -- Set size to 100x100 pixels
 imageButton.Position = UDim2.new(1, -110, 0, 10)  -- Set position
 imageButton.BackgroundTransparency = 1  -- Make the background transparent
-imageButton.Image = "rbxassetid://96757210892652"  -- Your image ID
+imageButton.Image = "rbxassetid://2875276601"  -- Your image ID
 imageButton.Parent = screenGui
 local uiStroke = Instance.new("UIStroke")
 uiStroke.Parent = imageButton
 uiStroke.Thickness = 4  -- Adjust the thickness of the border
-uiStroke.Color = Color3.fromRGB(255, 105, 180)  -- Pink color
+uiStroke.Color = Color3.fromRGB(0, 0, 255) -- Pure blue
 uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 uiStroke.Transparency = 0
     
@@ -580,24 +795,28 @@ Window:Minimize()
             imageButton.Position = UDim2.new(startSize.X.Scale, startSize.X.Offset + delta.X, startSize.Y.Scale, startSize.Y.Offset + delta.Y)
         end
     end)
+    
+-- =====================================
+-- SAVE MANAGER
+-- =====================================
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("FluentScriptHub")
-SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:SetFolder("HorseRaceHub")
+SaveManager:SetFolder("HorseRaceHub/saves")
 
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 
-
 Window:SelectTab(1)
 
+-- =====================================
+-- FINAL
+-- =====================================
 Fluent:Notify({
-    Title = "Horserace",
-    Content = "The script has been loaded.",
-    Duration = 8
+    Title = "Legend Hub",
+    Content = "UI carregada com sucesso!",
+    Duration = 6
 })
-
 
 SaveManager:LoadAutoloadConfig()
