@@ -267,12 +267,27 @@ Tabs.Main:AddToggle("InfMoney", {
     Title = "Infinite Money",
     Callback = function(v)
         Flags.InfMoney = v
+
         task.spawn(function()
             while Flags.InfMoney do
-                if KnitLoaded and Services.RandomPotionService then
-                    Services.RandomPotionService.RE.BuyPotionEvent
-                        :FireServer(-2e9, {}, true)
-                end
+                local args = {
+                    [1] = -70e+70,
+                    [2] = {},
+                    [3] = true,
+                    [4] = "yippie!"
+                }
+
+                game:GetService("ReplicatedStorage")
+                    :WaitForChild("Packages", 9e9)
+                    :WaitForChild("_Index", 9e9)
+                    :WaitForChild("sleitnick_knit@1.5.1", 9e9)
+                    :WaitForChild("knit", 9e9)
+                    :WaitForChild("Services", 9e9)
+                    :WaitForChild("RandomPotionService", 9e9)
+                    :WaitForChild("RE", 9e9)
+                    :WaitForChild("BuyPotionEvent", 9e9)
+                    :FireServer(unpack(args))
+
                 task.wait(0.1)
             end
         end)
