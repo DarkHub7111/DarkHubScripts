@@ -36,7 +36,7 @@ local Window = Fluent:CreateWindow({
     SubTitle = "By DarkHub",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
-    Theme = "Amethyst",
+    Theme = "Aqua",
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
@@ -310,6 +310,18 @@ Tabs.Misc:AddToggle("Halloween", {
     end
 })
 
+Tabs.Misc:AddToggle("Halloween", {
+    Title = "Open Chirstmas GUI",
+    Callback = function(v)
+        local gui = LocalPlayer.PlayerGui
+            :FindFirstChild("ChristmasDailyRewardGui", true)
+        if gui then
+            gui.Enabled = v
+            gui.ResetOnSpawn = false
+        end
+    end
+})
+
 Tabs.Misc:AddToggle("AutoGifts", {
     Title = "Auto Claim Gifts",
     Callback = function(v)
@@ -398,8 +410,8 @@ Tabs.Misc:AddToggle("AutoCrate2", {
 -- =====================================
 -- AUTO CLAIM EGG GHOST
 -- =====================================
-Tabs.Misc:AddToggle("AutoEggGhost", {
-    Title = "Auto Claim Egg Ghost",
+Tabs.Misc:AddToggle("AutoEggBrainrot", {
+    Title = "Auto Claim Egg Brainrot",
     Default = false,
     Callback = function(v)
         Flags.EggGhost = v
@@ -421,6 +433,12 @@ Tabs.Misc:AddToggle("AutoEggGhost", {
 -- =====================================
 -- TELEPORT
 -- =====================================
+
+Tabs.Teleport:AddParagraph({
+    Title = "Info",
+    Content = "click in button and rejoin"
+})
+
 for i = 2, 4 do
     Tabs.Teleport:AddButton({
         Title = "World " .. i,
@@ -432,6 +450,17 @@ for i = 2, 4 do
         end
     })
 end
+
+-- Novo botão: Area Fruit
+Tabs.Teleport:AddButton({
+    Title = "Area Fruit",
+    Callback = function()
+        if KnitLoaded and Services.AreaService then
+            Services.AreaService.RE.UpdatePlayerCurrentArea
+                :FireServer("Area_Fruit")
+        end
+    end
+})
 
 -- =====================================
 -- PET
